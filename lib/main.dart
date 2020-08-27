@@ -1,295 +1,201 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-void main(){
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner:false,
-    title: "My App",
-    //home: MyScaffold(),
-    //home:TutoriaHome(),
-    //home:MyButton(),
-    //home:Conuter(),
-    //home:Counter(),
-    home: ShoppingList(
-      products: [
-        Product(name: 'Eggs'),
-        Product(name: 'Flour'),
-        Product(name: 'Chococate chips'),
-      ],
-    ),
-  ));
-}
+
+/*main(){
+  runApp(MyApp());
+}*/
+/**
+ * 普通路由的练习以及传值和一个计数器
+ * 命名路由的跳转
+ * {{很多的东西需要查看官方的文档}}
+ */
+void main() => runApp(MyApp());
 class MyApp extends StatelessWidget{
-  MyApp({this.title});
-  // Widget子类中的字段往往都会定义为"final"
-  final Widget title;
-  
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 56.0,
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
-      decoration: BoxDecoration(
-        color: Colors.blue[500],
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.red,
       ),
-      child: Row(//水平方向的线性布局
-        children: [
-          IconButton(
-            icon: Icon(Icons.menu),
-            tooltip: "Navigation menu",
-            onPressed: null,
-          ),
-          Expanded(
-            child: title,
-          ),
-          IconButton(
-            icon: Icon(Icons.search),
-            tooltip: 'Search',
-            onPressed: null,
-          ),
-        ],
-      ),
-    );
-  }
-}
-class MyScaffold extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: Column(
-        children: [
-          MyApp(
-            title: Text(
-                "Example title",
-              style: Theme.of(context).primaryTextTheme.title,
-            ),
-          ),
-          Expanded(
-            child: Center(
-              child: Text("Hello word"),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-class TutoriaHome extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(//Scaffold是Material中主要的布局组件.
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          tooltip: "Navigation menu",
-          onPressed: null,
-        ),
-        title: Text("Example title"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            tooltip: "Search",
-            onPressed: null,
-          ),
-        ],
-      ),
-      body: Center(
-        child: Text("Hello word"),
-      ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Add',
-        child: Icon(Icons.add),
-        onPressed: null,
-      ),
-    );
-  }
-}
-//处理手势
-class MyButton extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    /**
-     * 该GestureDetector widget并不具有显示效果，
-     * 而是检测由用户做出的手势。
-     * 当用户点击Container时，
-     * GestureDetector会调用它的onTap回调，
-     * 在回调中，将消息打印到控制台。
-     * 您可以使用GestureDetector来检测各种输入手势，
-     * 包括点击、拖动和缩放。
-     *
-     * 许多widget都会使用一个GestureDetector为其他widget提供可选的回调。
-     * 例如，IconButton、 RaisedButton、 和FloatingActionButton ，
-     * 它们都有一个onPressed回调，它会在用户点击该widget时被触发。
-     */
-    return GestureDetector(
-      onTap: (){
-        print("MyButton was tapped");
+      initialRoute: '/',//配置初始化路由
+      routes: {
+        '/NewRoute':(content) => NewRoute(),
+        '/':(content) => MyHomePage(title: "您好"),
+        '/EchoRoute':(content) => EchoRoute(),
+        '/TipRoute':(content){//配置路由,在这儿的情况是在不改变源码的情况下实现路由的跳转
+          return TipRoute(text:ModalRoute.of(context).settings.arguments);
+        },
       },
-      child: Container(
-        height: 36,
-        padding: EdgeInsets.all(8),
-        margin: EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Colors.lightGreen,
-        ),
-        child: Center(
-          child: Text("Engage"),
-        ),
-      ),
     );
   }
 }
-
-//根据用户的如改变widget(有状态的组件)
-/*class Conuter extends StatefulWidget{
-  @override
-  _ConuterState createState() => _ConuterState();
-
+class MyHomePage extends StatefulWidget{
+  MyHomePage({Key key,this.title}):super(key:key);
+  final String title;
+  _MyHomePageState createState() => _MyHomePageState();
 }
-class _ConuterState extends State<Conuter>{
+class _MyHomePageState extends State<MyHomePage>{
   int _count = 0;
   void _increment(){
     setState(() {
-      _count++;
+      this._count++;
     });
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("根据输入改变组件"),
+        title: Text("Flutter frist demo"),
       ),
-      body: Row(//水平布局
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      body: Center(
+        child: Column(//垂直布局
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            WidgetPageTo(),//这个是去其他组件页面的一个自定义组件
+            
+            Text(widget.title),//
+            Text(
+              "$_count",
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            FlatButton(
+              child: Text(
+                "NewRoute",
+                style: TextStyle(
+                  fontSize: 40,
+                  color: Colors.red
+                ),
+              ),
+              onPressed: (){
+                /*Navigator.push(context,
+                  MaterialPageRoute(
+                    builder: (content) => NewRoute(),
+                  ),
+                );*/
+                //命名路由的跳转
+                Navigator.pushNamed(context, '/NewRoute');
+              },
+            ),
+            RaisedButton(
+              child: Text("EchoRoute"),
+              onPressed: (){
+                Navigator.of(context).pushNamed('/EchoRoute',arguments: "路由传值");
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _increment,
+        tooltip: 'increment',
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+//定义一个新的页面
+class NewRoute extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("NewRoute"),
+      ),
+      body: Container(
+        color: Colors.black54,
+        child: Center(
+          child: RouterTestRoute(),
+        ),
+      ),
+    );
+  }
+}
+//定义一个新的路由页面,并进行传值
+class TipRoute extends StatelessWidget{
+  //类的构造函数
+  TipRoute({
+    Key key,
+    @required this.text,
+  }):super(key: key);
+
+  //类的成员变量
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+   return Scaffold(
+     appBar: AppBar(
+       title: Text("TipRoute路由传值"),
+       centerTitle: true,
+     ),
+     body: Padding(//外边距
+       padding: EdgeInsets.all(18),
+       child: Center(
+         child: Column(
+           children: [
+             Text(text),
+             RaisedButton(
+               //返回到上一级路由
+               onPressed: () => Navigator.pop(context, "您好,RouterTestRoute"),
+               child: Text("返回"),
+             )
+           ],
+         ),
+       ),
+     ),
+   );
+  }
+}
+class RouterTestRoute extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: RaisedButton(
+        onPressed: () async { //async是flutter的一步操作,需要配合await
+          //打开 TipRoute,并等待返回结果
+          var result = await Navigator.push(context,
+              MaterialPageRoute(
+                builder: (content){
+                  return TipRoute(text: "您好,TipRoute");
+                }
+              ),
+          );
+          print("路由返回值是:$result");
+        },
+        child: Text("打开TipRoute"),
+      ),
+    );
+  }
+}
+//定义一个新的路由,演示路由传值
+class EchoRoute extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    //接收参数
+    var parmater = ModalRoute.of(context).settings.arguments;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(parmater),
+      ),
+    );
+  }
+}
+//路由生成钩子(在研究一下,不是很懂,电商app)
+
+
+//下面的Widget提供跳转到其他的演示组件页面
+class WidgetPageTo extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
         children: [
+          //去包管理演示页面
           RaisedButton(
-            child: Text("Increment"),
-            onPressed: (){
-              _increment();//调用方法
-            },
+            
           ),
-          Text("Count: $_count"),
         ],
       ),
     );
   }
-}*/
-//
-class CounterDisplay extends StatelessWidget{
-  CounterDisplay({this.count});
-  final int count;
-  @override
-  Widget build(BuildContext context) {
-    return Text("Count: $count");
-  }
-}
-class CounterIncrementor extends StatelessWidget{
-  CounterIncrementor({this.onPressed});
-  final VoidCallback onPressed;
-  @override
-  Widget build(BuildContext context) {
-    return RaisedButton(
-      onPressed: onPressed,
-      child: Text("Increment"),
-    );
-  }
-}
-class Counter extends StatefulWidget{
-  @override
-  _CounterState createState () => _CounterState();
-}
-class _CounterState extends State<Counter>{
-  int _count = 0;
-  void _incrrement(){
-    _count++;
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        //调用自定义的组件
-        CounterIncrementor(onPressed: _incrrement),
-        CounterDisplay(count: _count),
-      ],
-    );
-  }
-}
-
-//综合案列
-class Product{//普通的Dart类
-  const Product({this.name});
-  final String name;
-}
-typedef void CartChangedCallback(Product product,bool inCart);
-
-class ShoppingListItem extends StatelessWidget{
-  ShoppingListItem({Product product,this.inCart,this.onCartChanged})
-      : product = product,
-        super(key: new ObjectKey(product));
-  final Product product;
-  final bool inCart;
-  final CartChangedCallback onCartChanged;
-
-
-  Color _getColor (BuildContext context){
-    return inCart?Colors.black54:Theme.of(context).primaryColor;
-  }
-  TextStyle _getTextStyle(BuildContext context){
-    if(!inCart) return null;
-    return TextStyle(
-      color: Colors.black54,
-      decoration: TextDecoration.lineThrough,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      onTap: (){
-        onCartChanged(product, !inCart);
-      },
-      leading: new CircleAvatar(
-        backgroundColor: _getColor(context),
-        child: new Text(product.name[0]),
-      ),
-      title: new Text(product.name, style: _getTextStyle(context)),
-    );
-  }
-}
-class ShoppingList extends StatefulWidget{
-  ShoppingList({Key key,this.products}):super(key: key);
-  final List<Product> products;
-  _ShoppingListState createState () => _ShoppingListState();
-}
-class _ShoppingListState extends State<ShoppingList>{
-  @override
-  Widget build(BuildContext context) {
-    Set<Product> _shoppingCart = new Set<Product>();
-    void _handleCartChanged(Product product, bool inCart){
-      setState(() {
-        if(inCart){
-          _shoppingCart.add(product);
-        }else{
-          _shoppingCart.remove(product);
-        }
-      });
-    }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Shoping List"),
-      ),
-      body: ListView(
-        padding: EdgeInsets.symmetric(vertical: 8),
-        children: widget.products.map((Product product) {
-          return ShoppingListItem(
-            product: product,
-            inCart: _shoppingCart.contains(product),
-            onCartChanged: _handleCartChanged,
-          );
-        }).toList(),
-      ),
-    );
-  }
-  
 }

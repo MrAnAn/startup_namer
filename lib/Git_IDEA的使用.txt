@@ -1,0 +1,25 @@
+1.下载git
+2.安装git(一路下一步,需要住安装的位置)
+3.配置git
+	右键打开Git Bash Here
+	执行命令
+		git config --global user.name "名称随便写"
+		git config --global user.email "您的邮箱"
+		执行完这两句命令以后是没有任何提示的,表示git配置成功
+		记下来在执行 ssh ketgen -t rsa -C "您在Git服务器上提供的邮箱地址"
+		执行完命令以后去c盘,您的用户名下查看.ssh文件夹,找到里面的id_rsa.pub文件,用记事本打开,复制里面的东西去Git官网,接下来头像下拉菜单---settings---找到SSH and GPG Kes----New SSHkeys---title填写ssh-rsa,key填写您复制的key---然后add ssh key
+4.接下来打开IDEA
+	file---settings---version control---Git---path to git executable(配置git的安装路径,精确到bin目录下面的git.exe)----接着点击test测试是否将git在IDEA中配置成功(如果出现git版本号的好就是Git在IDEA中已经配置成功)----接下来保存即可
+5,在IDEA中配置git服务器的用户名和密码
+	file---settings---version control--gitHub---点击+号---直接可以按照操作提示去github授权,这样就添加了github服务器在IDEA中
+6.接下来就是将gitHub上面的项目拉倒本地和将本地的项目上传到github
+
+
+
+
+/**
+   * pub库
+   * https://pub.dev/packages
+   * https://pub.flutter-io.cn/packages
+   * https://pub.dartlang.org/flutter/
+   */
